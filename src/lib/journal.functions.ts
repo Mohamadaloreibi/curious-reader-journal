@@ -16,7 +16,7 @@ export const getAdminWorkspace = createServerFn({ method: "GET" }).middleware([r
   if (fetchError) throw new Error("Artiklarna kunde inte hämtas.");
   return { allowed: true, profile, articles };
 });
-export const saveJournalArticle = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(publishingSchema).handler(async ({ data, context }) => {
+export const saveJournalArticle = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).validator(publishingSchema).handler(async ({ data, context }) => {
   const { data: allowed, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
   if (error) throw new Error("Behörigheten kunde inte kontrolleras."); assertAdmin(allowed);
   const { id, readingTime, coverImage, coverAlt, seoTitle, seoDescription, ogImage, ...rest } = data;
@@ -25,7 +25,7 @@ export const saveJournalArticle = createServerFn({ method: "POST" }).middleware(
   if (result.error) throw new Error(result.error.code === "23505" ? "Denna artikeladress används redan." : "Artikeln kunde inte sparas.");
   return result.data;
 });
-export const saveJournalProfile = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ display_name: z.string().max(200), avatar_url: z.string().max(2000).refine(v => !v || /^https:\/\//.test(v), "Profilbilden behöver en https-adress.") })).handler(async ({ data, context }) => {
+export const saveJournalProfile = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).validator(z.object({ display_name: z.string().max(200), avatar_url: z.string().max(2000).refine(v => !v || /^https:\/\//.test(v), "Profilbilden behöver en https-adress.") })).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from("profiles").upsert({ id: context.userId, ...data });
   if (error) throw new Error("Profilen kunde inte sparas."); return { ok: true };
 });
