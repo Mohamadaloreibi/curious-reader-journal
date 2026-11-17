@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Journal architecture
+- Article content and metadata live in Markdown frontmatter under src/content/articles and are loaded with Vite raw imports; adding one file must populate home, categories, and article routes without a database.
+- Shared journal navigation and footer wrap the root Outlet; content routes own their metadata so every page is independently shareable.
+- Keep unavailable editorial fields empty and render an explicit preparation state instead of generating content; source references are derived from the supplied source list.
+- Canonical and Open Graph page URLs are relative until a real public domain exists; do not deploy placeholder domains or preview URLs as canonical targets.

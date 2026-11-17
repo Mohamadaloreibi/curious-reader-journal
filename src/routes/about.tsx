@@ -1,0 +1,8 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { mission } from "@/lib/articles";
+import { editorialHead } from "@/lib/seo";
+import journalCover from "@/assets/journal-cover.jpg";
+export const Route = createFileRoute("/about")({ head: () => editorialHead("About the journal", mission, "/about"), component: AboutPage });
+function AboutPage() {
+  return <main id="main-content" className="journal-shell"><header className="page-intro"><span className="eyebrow text-muted-foreground">Independent. Research-informed.</span><h1 className="page-title">About the journal</h1></header><div className="editorial-prose"><p className="text-3xl leading-snug">{mission}</p><h2>Football development, in perspective</h2><p>An independent publication about youth football, player development, coaching methodology, tactical understanding, research and evidence, and football education. Our focus is Swedish football, with an international perspective. Articles are published in Swedish and English.</p><h2>Independent analysis</h2><p>Critical thinking and source transparency are central to the journal. We explore the relationship between research and coaching practice, giving space to questions about how players learn, think, and develop.</p><h2>Sources and evidence</h2><p>Referenced work is linked directly within articles and collected in a References section. The journal approaches football development through evidence, independent analysis, and critical thinking.</p><img src={journalCover} alt="The Football Development Journal editorial cover" width={1200} height={640} loading="lazy" className="w-full mt-12"/></div></main>;
+}
