@@ -37,6 +37,7 @@ use the editor.
 - Admin writes use authenticated server functions plus a separate user_roles check and database policies; no signup, profile field, or browser state can grant administrator privileges.
 - RSS uses the same public article reader as the website and excludes articles without manuscript text; endpoint links derive from the request origin.
 - Article images store an HTTPS URL or a private-bucket object path; public reads resolve object paths to fresh signed URLs so image links do not expire permanently.
+- Direct storage reads are administrator-only; public image signing uses a lazy privileged client only for exact cover/sharing paths returned by the published-only RLS article query, so draft and unused uploads stay private.
 - Article body editing uses Markdown formatting tools and the same sanitized Markdown/reference renderer for live preview, full preview and public reading to prevent rendering drift.
 - Structured references keep legacy title/URL records valid with empty optional authors/year; optional SEO fields use additive database columns and are saved only on explicit editor actions.
 - Articles without a cover render without fallback imagery, so removing an image is respected on all reader surfaces.

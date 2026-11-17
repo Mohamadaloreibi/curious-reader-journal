@@ -1,0 +1,1 @@
+DROP POLICY journal_images_public_read ON storage.objects;

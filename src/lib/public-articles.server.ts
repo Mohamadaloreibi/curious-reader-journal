@@ -22,7 +22,11 @@ export async function readPublicArticles(): Promise<Article[]> {
   const sourcesSchema = z.array(sourceSchema);
   async function resolveImage(image: string) {
     if (!image.startsWith("journal-images/")) return image;
-    const { data } = await client.storage.from("journal-images").createSignedUrl(image.slice(15), 86400);
+    // Only sign exact image references returned by the published-only, RLS-scoped read above.
+    // Never accept a caller-supplied object path or use the privileged client to read articles.
+    if (!rows.some(row => row.status === "published" && (row.cover_image === image || row.og_image === image))) return "";
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin.storage.from("journal-images").createSignedUrl(image.slice(15), 3600);
     return data?.signedUrl.replace(url ?? "", import.meta.env['VITE_SUPABASE_URL']) ?? "";
   }
   const published: Article[] = await Promise.all(rows.map(async r => {

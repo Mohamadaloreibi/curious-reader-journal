@@ -29,6 +29,20 @@
       "when": 1794942328599,
       "tag": "0003_article_editor_seo_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794943594652,
+      "tag": "0004_restrict_journal_image_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794943635112,
+      "tag": "0005_deny_direct_public_journal_storage_reads",
+      "breakpoints": true
     }
   ]
 }
