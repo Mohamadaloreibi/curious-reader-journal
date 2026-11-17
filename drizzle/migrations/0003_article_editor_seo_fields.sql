@@ -1,0 +1,1 @@
+ALTER TABLE public.journal_articles ADD COLUMN IF NOT EXISTS seo_title text NOT NULL DEFAULT '', ADD COLUMN IF NOT EXISTS seo_description text NOT NULL DEFAULT '', ADD COLUMN IF NOT EXISTS og_image text NOT NULL DEFAULT '';

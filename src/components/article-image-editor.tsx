@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
-export function ArticleImageEditor({ value, alt, onChange }: { value: string; alt: string; onChange: (value: string, alt: string) => void }) {
+export function ArticleImageEditor({ value, alt, onChange, title = "Omslagsbild" }: { value: string; alt: string; onChange: (value: string, alt: string) => void; title?: string }) {
   const [preview, setPreview] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -14,7 +14,7 @@ export function ArticleImageEditor({ value, alt, onChange }: { value: string; al
     } else setPreview(value);
     return () => { active = false; };
   }, [value]);
-  return <section className="space-y-4"><h2 className="font-serif text-2xl">Omslagsbild</h2>
+  return <section className="space-y-4"><h2 className="font-serif text-2xl">{title}</h2>
     {preview && <img src={preview} alt={alt} className="w-full max-w-xl aspect-video object-cover" />}
     <label className="admin-field">Ladda upp bild<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={async e => {
       const input = e.currentTarget;
@@ -33,7 +33,7 @@ export function ArticleImageEditor({ value, alt, onChange }: { value: string; al
     {busy && <p role="status" className="text-sm">Laddar upp…</p>}
     <label className="admin-field">Bildadress<input type="url" placeholder="https://…" value={value.startsWith("journal-images/") ? "" : value} onChange={e => onChange(e.target.value, alt)} /></label>
     <label className="admin-field">Bildbeskrivning<input value={alt} onChange={e => onChange(value, e.target.value)} /></label>
-    {value && <Button variant="outline" onClick={() => onChange("", "")}><X />Återställ standardbild</Button>}
+    {value && <Button variant="outline" onClick={() => onChange("", "")}><X />Ta bort bild</Button>}
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
   </section>;
 }

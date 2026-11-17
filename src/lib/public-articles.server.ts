@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { articles, type Article } from "./articles";
+import { articles, sourceSchema, type Article } from "./articles";
 import { mergeArticles } from "./publishing";
 import { z } from "zod";
 
@@ -19,14 +19,15 @@ export async function readPublicArticles(): Promise<Article[]> {
     if (error) throw new Error("Artiklarna kunde inte hämtas.");
     rows.push(...data); if (data.length < 500) break;
   }
-  const sourcesSchema = z.array(z.object({ title: z.string(), url: z.string().url() }));
+  const sourcesSchema = z.array(sourceSchema);
+  async function resolveImage(image: string) {
+    if (!image.startsWith("journal-images/")) return image;
+    const { data } = await client.storage.from("journal-images").createSignedUrl(image.slice(15), 86400);
+    return data?.signedUrl.replace(url ?? "", import.meta.env['VITE_SUPABASE_URL']) ?? "";
+  }
   const published: Article[] = await Promise.all(rows.map(async r => {
-    let coverImage = r.cover_image;
-    if (coverImage.startsWith("journal-images/")) {
-      const { data } = await client.storage.from("journal-images").createSignedUrl(coverImage.slice(15), 86400);
-      coverImage = data?.signedUrl.replace(url, import.meta.env['VITE_SUPABASE_URL']) ?? "";
-    }
-    return { title: r.title, slug: r.slug, subtitle: r.subtitle, excerpt: r.excerpt, category: r.category, author: r.author, date: r.date, language: r.language === "en" ? "en" as const : "sv" as const, readingTime: r.reading_time, featured: r.featured, sources: sourcesSchema.parse(r.sources), body: r.body, coverImage, coverAlt: r.cover_alt };
+    const [coverImage, ogImage] = await Promise.all([resolveImage(r.cover_image), resolveImage(r.og_image)]);
+    return { title: r.title, slug: r.slug, subtitle: r.subtitle, excerpt: r.excerpt, category: r.category, author: r.author, date: r.date, language: r.language === "en" ? "en" as const : "sv" as const, readingTime: r.reading_time, featured: r.featured, sources: sourcesSchema.parse(r.sources), body: r.body, coverImage, coverAlt: r.cover_alt, seoTitle: r.seo_title, seoDescription: r.seo_description, ogImage };
   }));
   return mergeArticles(articles, published);
 }

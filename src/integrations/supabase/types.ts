@@ -27,8 +27,11 @@ export type Database = {
           featured: boolean
           id: string
           language: string
+          og_image: string
           published_at: string | null
           reading_time: string
+          seo_description: string
+          seo_title: string
           slug: string
           sources: Json
           status: string
@@ -48,8 +51,11 @@ export type Database = {
           featured?: boolean
           id?: string
           language?: string
+          og_image?: string
           published_at?: string | null
           reading_time?: string
+          seo_description?: string
+          seo_title?: string
           slug: string
           sources?: Json
           status?: string
@@ -69,8 +75,11 @@ export type Database = {
           featured?: boolean
           id?: string
           language?: string
+          og_image?: string
           published_at?: string | null
           reading_time?: string
+          seo_description?: string
+          seo_title?: string
           slug?: string
           sources?: Json
           status?: string

@@ -180,5 +180,26 @@
 .admin-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
 .admin-article-row { display: flex; justify-content: space-between; align-items: center; gap: 30px; border-top: 1px solid var(--border); padding-block: 25px; }
 .admin-profile { padding-block: 30px; max-width: 600px; }
+.body-editor, .body-editor-columns > *, .body-live-preview { min-width: 0; }
+.body-editor-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.body-live-preview { padding-top: 16px; }
+.body-live-preview .editorial-prose { font-size: 18px; padding-block: 16px 24px; }
+.body-live-preview .editorial-prose h2 { font-size: 27px; }
+.body-live-preview .editorial-prose blockquote { font-size: 23px; padding-left: 18px; }
+.editorial-prose, .page-title { overflow-wrap: anywhere; }
+.editorial-prose strong { font-weight: 700; }
+.editorial-prose table { display: block; max-width: 100%; overflow-x: auto; }
+.editorial-prose pre { max-width: 100%; overflow-x: auto; }
+.editorial-prose img { max-width: 100%; height: auto; }
+.article-references { border-top: 1px solid var(--border); margin-top: 48px; }
+.article-references li { padding-left: 8px; margin-bottom: 22px; }
+.article-references .reference-meta { font-family: var(--font-sans); font-size: 13px; color: var(--muted-foreground); margin-bottom: 6px; }
+.reference-editor-row { border-top: 1px solid var(--border); padding-block: 20px; }
+.feature.feature-no-image { color: var(--foreground); min-height: 0; border-block: 1px solid var(--border); }
+.feature-no-image::after { display: none; }
+.feature-no-image .feature-copy { padding: 40px 0; max-width: 960px; }
+.article-teaser.teaser-no-image { grid-template-columns: 1fr; }
+@media(max-width:850px) { .body-editor-columns { grid-template-columns: 1fr; } .body-live-preview { border-top: 1px solid var(--border); } }
+@media(max-width:600px) { .feature.feature-no-image { margin-inline: 0; } .editorial-prose blockquote { font-size: 24px; padding-left: 18px; } }
 .source-row { display: grid; grid-template-columns: 1fr 1fr 36px; align-items: end; gap: 16px; margin-bottom: 20px; }
 @media(max-width:600px) { .auth-layout { padding-block: 40px 55px; } .admin-form-grid { grid-template-columns: 1fr; } .admin-article-row { align-items: start; flex-direction: column; gap: 18px; } .source-row { grid-template-columns: 1fr; } .admin-toolbar { align-items: start; } }

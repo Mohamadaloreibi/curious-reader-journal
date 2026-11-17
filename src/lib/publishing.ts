@@ -6,10 +6,13 @@ export const publishingSchema = z.object({
   subtitle: z.string().max(1000), excerpt: z.string().max(2000),
   coverImage: z.string().max(4000).default("").refine(v => !v || /^https:\/\//.test(v) || /^journal-images\/[a-zA-Z0-9-]+\.(jpg|png|webp)$/.test(v), "Ange en https-bildadress eller ladda upp en bild."),
   coverAlt: z.string().max(1000).default(""),
+  seoTitle: z.string().trim().max(300).default(""),
+  seoDescription: z.string().trim().max(2000).default(""),
+  ogImage: z.string().max(4000).default("").refine(v => !v || /^https:\/\//.test(v) || /^journal-images\/[a-zA-Z0-9-]+\.(jpg|png|webp)$/.test(v), "Ange en https-bildadress eller ladda upp en bild."),
   category: z.enum(["Coaching", "Player Development", "Tactics", "Research"]),
   author: z.string().max(200), date: z.string().refine(v => v === "" || /^\d{4}-\d{2}-\d{2}$/.test(v), "Ange ett giltigt datum"),
   language: z.enum(["sv", "en"]), readingTime: z.string().max(30), featured: z.boolean(),
-  sources: z.array(z.object({ title: z.string().min(1).max(500), url: z.string().url().refine(v => /^https?:\/\//.test(v)) })).max(100),
+  sources: z.array(z.object({ title: z.string().min(1).max(500), authors: z.string().max(1000).default(""), year: z.string().max(4).regex(/^$|^\d{4}$/, "Ange ett fyrsiffrigt år.").default(""), url: z.string().url().refine(v => /^https?:\/\//.test(v)) })).max(100),
   body: z.string().max(500000), status: z.enum(["draft", "published"]),
 }).superRefine((a, ctx) => { if (a.status === "published" && !a.body.trim()) ctx.addIssue({ code: "custom", path: ["body"], message: "Lägg till artikeltext innan publicering." }); });
 export type PublishingInput = z.infer<typeof publishingSchema>;

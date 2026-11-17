@@ -8,13 +8,18 @@ export const categories = [
   { name: "Research", slug: "research", heading: "Football Research" },
 ] as const;
 
+export const sourceSchema = z.object({
+  title: z.string(), authors: z.string().default(""), year: z.string().default(""), url: z.string().url(),
+});
+export type ArticleSource = z.infer<typeof sourceSchema>;
 const articleSchema = z.object({
   title: z.string(), slug: z.string(), subtitle: z.string().default(""),
   excerpt: z.string().default(""), category: z.string(), author: z.string().default(""),
   coverImage: z.string().default(""), coverAlt: z.string().default(""),
+  seoTitle: z.string().default(""), seoDescription: z.string().default(""), ogImage: z.string().default(""),
   date: z.string().default(""), language: z.enum(["sv", "en"]),
   readingTime: z.union([z.string(), z.number()]).default(""), featured: z.boolean().default(false),
-  sources: z.array(z.object({ title: z.string(), url: z.string().url() })).default([]),
+  sources: z.array(sourceSchema).default([]),
 });
 export type Article = z.infer<typeof articleSchema> & { body: string };
 

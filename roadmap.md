@@ -1,4 +1,6 @@
 # Journal roadmap
+- [x] Upgrade Markdown editor with live preview, structured references and optional sharing metadata without modifying manuscripts or publishing records.
+- [x] Remove the supplied test article's cover and verify editing and mobile reading.
 - [x] Enable the owner's admin access and verify existing article editing with image upload.
 - [x] Add secure admin login, profile editing, article drafts and publishing.
 - [x] Connect public pages and search to published admin articles while retaining Markdown content.

@@ -6,7 +6,6 @@ import { categories, articleMeta, mission } from "@/lib/articles";
 import { editorialHead } from "@/lib/seo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { publicArticlesQuery } from "@/lib/article-queries";
-import footballPhoto from "@/assets/football-training.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -24,12 +23,12 @@ function Index() {
   const featured = articles.find(a => a.featured && a.body.trim()) ?? articles.find(a => a.featured);
   return <main id="main-content" className="journal-shell">
     <div className="journal-strap eyebrow"><span>An independent football publication</span><span className="strap-secondary">Ideas · Practice · Evidence</span></div>
-    {featured && <section className="feature" aria-label="Featured article"><img src={featured.coverImage || footballPhoto} className="feature-photo" alt={featured.coverImage ? featured.coverAlt : "A football player on a Swedish training pitch"} width={1920} height={1024}/>
-      <div className="feature-copy"><div className="feature-label eyebrow">{featured.category}<span className="text-hero-foreground/70 ml-2">{featured.language === "sv" ? "Svenska" : "English"}</span></div>
+    {featured && <section className={`feature ${featured.coverImage ? "" : "feature-no-image"}`} aria-label="Featured article">{featured.coverImage && <img src={featured.coverImage} className="feature-photo" alt={featured.coverImage ? featured.coverAlt : "A football player on a Swedish training pitch"} width={1920} height={1024}/>}
+      <div className="feature-copy"><div className="feature-label eyebrow">{featured.category}<span className="text-current/70 ml-2">{featured.language === "sv" ? "Svenska" : "English"}</span></div>
         <h1 lang={featured.language}>{featured.title}</h1>
         {featured.excerpt && <p className="feature-excerpt">{featured.excerpt}</p>}
         {articleMeta(featured) && <p className="text-xs mb-6">{articleMeta(featured)}</p>}
-        <Button asChild variant="hero" size="lg"><Link to="/articles/$slug" params={{ slug: featured.slug }}>Read article <ArrowUpRight/></Link></Button>
+        <Button asChild variant={featured.coverImage ? "hero" : "default"} size="lg"><Link to="/articles/$slug" params={{ slug: featured.slug }}>Read article <ArrowUpRight/></Link></Button>
       </div>
     </section>}
     <section className="section-band" aria-labelledby="latest-heading"><div className="section-heading"><h2 id="latest-heading">Latest from the journal</h2><span className="eyebrow text-muted-foreground">{String(articles.length).padStart(2,"0")} {articles.length === 1 ? "article" : "articles"}</span></div><div className="space-y-10">{articles.map(a => <ArticleTeaser key={a.slug} article={a}/>)}</div></section>

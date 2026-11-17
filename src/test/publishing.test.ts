@@ -4,6 +4,19 @@ import { articles } from "@/lib/articles";
 import { createRss } from "@/lib/rss";
 const draft = { ...articles[0], title: "Test", slug: "test", readingTime: "", status: "draft" };
 describe("Admin publication rules", () => {
+  it("preserves structured references and optional SEO fields", () => {
+    const result = publishingSchema.parse({ ...draft, seoTitle: "Editorial SEO title", seoDescription: "Research description", ogImage: "https://journal.test/share.jpg", sources: [{ title: "Research paper", authors: "A. Author", year: "2024", url: "https://journal.test/paper" }] });
+    expect(result).toMatchObject({ status: "draft", seoTitle: "Editorial SEO title", seoDescription: "Research description", ogImage: "https://journal.test/share.jpg", sources: [{ title: "Research paper", authors: "A. Author", year: "2024", url: "https://journal.test/paper" }] });
+  });
+  it("keeps legacy title-and-URL references and defaults optional SEO fields to empty", () => {
+    const result = publishingSchema.parse({ ...draft, seoTitle: undefined, seoDescription: undefined, ogImage: undefined, sources: [{ title: "Legacy source", url: "https://journal.test/old" }] });
+    expect(result.sources[0]).toEqual({ title: "Legacy source", url: "https://journal.test/old", authors: "", year: "" });
+    expect([result.seoTitle, result.seoDescription, result.ogImage]).toEqual(["", "", ""]);
+  });
+  it("rejects unsafe sharing URLs and invalid reference years", () => {
+    expect(publishingSchema.safeParse({ ...draft, ogImage: "javascript:alert(1)" }).success).toBe(false);
+    expect(publishingSchema.safeParse({ ...draft, sources: [{ title: "Paper", authors: "", year: "24", url: "https://journal.test/paper" }] }).success).toBe(false);
+  });
   it("requires explicit admin permission", () => { expect(() => assertAdmin(false)).toThrow(); expect(() => assertAdmin(null)).toThrow(); expect(() => assertAdmin(true)).not.toThrow(); });
   it("permits an empty draft but rejects publishing empty text", () => { expect(publishingSchema.safeParse(draft).success).toBe(true); expect(publishingSchema.safeParse({ ...draft, status: "published" }).success).toBe(false); expect(publishingSchema.safeParse({ ...draft, body: "Provided manuscript", status: "published" }).success).toBe(true); });
   it("lets an admin-published article replace its Markdown placeholder", () => { const first = articles[0]; if (!first) throw new Error("Missing supplied article"); const result = mergeArticles(articles, [{ ...first, body: "Supplied final text" }]); expect(result).toHaveLength(1); expect(result[0]?.body).toBe("Supplied final text"); });
