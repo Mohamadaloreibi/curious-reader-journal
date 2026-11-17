@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createRouter, rootRouteId } from "@tanstack/react-router";
+import { createRouter } from "@tanstack/react-router";
 import { describe, expect, it } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
@@ -12,6 +12,16 @@ describe("App routing", () => {
 
     const matches = router.matchRoutes("/");
 
-    expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
+    expect(matches.map((match) => match.routeId)).toEqual(["__root__", "/"]);
+  });
+
+  it("keeps the admin page under its authentication layout without claiming home", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+
+    expect(router.matchRoutes("/admin").map((match) => match.routeId)).toEqual([
+      "__root__",
+      "/_authenticated",
+      "/_authenticated/admin",
+    ]);
   });
 });
