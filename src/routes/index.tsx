@@ -11,7 +11,12 @@ import footballPhoto from "@/assets/football-training.jpg";
 export const Route = createFileRoute("/")({
   component: Index,
   loader: ({ context }) => context.queryClient.ensureQueryData(publicArticlesQuery),
-  head: () => editorialHead("The Football Development Journal", mission, "/"),
+  head: ({ loaderData }) => {
+    const head = editorialHead("The Football Development Journal", mission, "/");
+    const featured = loaderData?.find(a => a.featured && a.body.trim()) ?? loaderData?.find(a => a.featured);
+    if (featured?.coverImage.startsWith("https://")) head.meta.push({ property: "og:image", content: featured.coverImage }, { name: "twitter:image", content: featured.coverImage });
+    return head;
+  },
 });
 
 function Index() {
@@ -19,7 +24,7 @@ function Index() {
   const featured = articles.find(a => a.featured && a.body.trim()) ?? articles.find(a => a.featured);
   return <main id="main-content" className="journal-shell">
     <div className="journal-strap eyebrow"><span>An independent football publication</span><span className="strap-secondary">Ideas · Practice · Evidence</span></div>
-    {featured && <section className="feature" aria-label="Featured article"><img src={footballPhoto} className="feature-photo" alt="A football player on a Swedish training pitch" width={1920} height={1024}/>
+    {featured && <section className="feature" aria-label="Featured article"><img src={featured.coverImage || footballPhoto} className="feature-photo" alt={featured.coverImage ? featured.coverAlt : "A football player on a Swedish training pitch"} width={1920} height={1024}/>
       <div className="feature-copy"><div className="feature-label eyebrow">{featured.category}<span className="text-hero-foreground/70 ml-2">{featured.language === "sv" ? "Svenska" : "English"}</span></div>
         <h1 lang={featured.language}>{featured.title}</h1>
         {featured.excerpt && <p className="feature-excerpt">{featured.excerpt}</p>}

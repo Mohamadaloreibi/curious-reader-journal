@@ -20,6 +20,13 @@ export async function readPublicArticles(): Promise<Article[]> {
     rows.push(...data); if (data.length < 500) break;
   }
   const sourcesSchema = z.array(z.object({ title: z.string(), url: z.string().url() }));
-  const published: Article[] = rows.map(r => ({ title: r.title, slug: r.slug, subtitle: r.subtitle, excerpt: r.excerpt, category: r.category, author: r.author, date: r.date, language: r.language === "en" ? "en" : "sv", readingTime: r.reading_time, featured: r.featured, sources: sourcesSchema.parse(r.sources), body: r.body }));
+  const published: Article[] = await Promise.all(rows.map(async r => {
+    let coverImage = r.cover_image;
+    if (coverImage.startsWith("journal-images/")) {
+      const { data } = await client.storage.from("journal-images").createSignedUrl(coverImage.slice(15), 86400);
+      coverImage = data?.signedUrl.replace(url, import.meta.env['VITE_SUPABASE_URL']) ?? "";
+    }
+    return { title: r.title, slug: r.slug, subtitle: r.subtitle, excerpt: r.excerpt, category: r.category, author: r.author, date: r.date, language: r.language === "en" ? "en" as const : "sv" as const, readingTime: r.reading_time, featured: r.featured, sources: sourcesSchema.parse(r.sources), body: r.body, coverImage, coverAlt: r.cover_alt };
+  }));
   return mergeArticles(articles, published);
 }

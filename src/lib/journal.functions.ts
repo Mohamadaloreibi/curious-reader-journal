@@ -19,8 +19,8 @@ export const getAdminWorkspace = createServerFn({ method: "GET" }).middleware([r
 export const saveJournalArticle = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(publishingSchema).handler(async ({ data, context }) => {
   const { data: allowed, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
   if (error) throw new Error("Behörigheten kunde inte kontrolleras."); assertAdmin(allowed);
-  const { id, readingTime, ...rest } = data;
-  const record = { ...rest, reading_time: readingTime, updated_at: new Date().toISOString(), published_at: data.status === "published" ? new Date().toISOString() : null };
+  const { id, readingTime, coverImage, coverAlt, ...rest } = data;
+  const record = { ...rest, cover_image: coverImage, cover_alt: coverAlt, reading_time: readingTime, updated_at: new Date().toISOString(), published_at: data.status === "published" ? new Date().toISOString() : null };
   const result = id ? await context.supabase.from("journal_articles").update(record).eq("id", id).select("id").single() : await context.supabase.from("journal_articles").insert({ ...record, created_by: context.userId }).select("id").single();
   if (result.error) throw new Error(result.error.code === "23505" ? "Denna artikeladress används redan." : "Artikeln kunde inte sparas.");
   return result.data;

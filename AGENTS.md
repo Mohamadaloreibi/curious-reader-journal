@@ -36,3 +36,4 @@ use the editor.
 - Canonical and Open Graph page URLs are relative until a real public domain exists; do not deploy placeholder domains or preview URLs as canonical targets.
 - Admin writes use authenticated server functions plus a separate user_roles check and database policies; no signup, profile field, or browser state can grant administrator privileges.
 - RSS uses the same public article reader as the website and excludes articles without manuscript text; endpoint links derive from the request origin.
+- Article images store an HTTPS URL or a private-bucket object path; public reads resolve object paths to fresh signed URLs so image links do not expire permanently.

@@ -56,7 +56,7 @@ export function JournalFooter() {
 }
 
 export function ArticleTeaser({ article }: { article: Article }) {
-  return <article className="article-teaser"><Link to="/articles/$slug" params={{ slug: article.slug }} tabIndex={-1} aria-hidden="true"><img className="teaser-image" src={footballPhoto} alt="" width={1920} height={1024} loading="lazy"/></Link>
+  return <article className="article-teaser"><Link to="/articles/$slug" params={{ slug: article.slug }} tabIndex={-1} aria-hidden="true"><img className="teaser-image" src={article.coverImage || footballPhoto} alt={article.coverAlt} width={1920} height={1024} loading="lazy"/></Link>
     <div><div className="eyebrow text-primary flex gap-3"><span>{article.category}</span><span className="text-muted-foreground">{article.language === "sv" ? "Svenska" : "English"}</span></div>
     <h3 className="teaser-title" lang={article.language}><Link to="/articles/$slug" params={{ slug: article.slug }}>{article.title}</Link></h3>
     {article.excerpt && <p className="font-serif text-lg mt-3 text-muted-foreground">{article.excerpt}</p>}

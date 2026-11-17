@@ -11,6 +11,7 @@ export const categories = [
 const articleSchema = z.object({
   title: z.string(), slug: z.string(), subtitle: z.string().default(""),
   excerpt: z.string().default(""), category: z.string(), author: z.string().default(""),
+  coverImage: z.string().default(""), coverAlt: z.string().default(""),
   date: z.string().default(""), language: z.enum(["sv", "en"]),
   readingTime: z.union([z.string(), z.number()]).default(""), featured: z.boolean().default(false),
   sources: z.array(z.object({ title: z.string(), url: z.string().url() })).default([]),
