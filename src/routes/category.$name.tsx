@@ -1,13 +1,15 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { categories, categoryArticles } from "@/lib/articles";
+import { categories } from "@/lib/articles";
+import { publicArticlesQuery } from "@/lib/article-queries";
 import { editorialHead } from "@/lib/seo";
 import { ArticleTeaser } from "@/components/journal";
 
 export const Route = createFileRoute("/category/$name")({
-  loader: ({ params }) => {
+  loader: async ({ params, context }) => {
     const category = categories.find(c => c.slug === params.name);
     if (!category) throw notFound();
-    return { category, articles: categoryArticles(category.name) };
+    const articles = await context.queryClient.ensureQueryData(publicArticlesQuery);
+    return { category, articles: articles.filter(a => a.category === category.name || a.category === category.heading) };
   },
   head: ({ loaderData }) => editorialHead(loaderData?.category.heading ?? "Unavailable", `Independent football analysis: ${loaderData?.category.heading ?? "the journal"}.`, loaderData ? `/category/${loaderData.category.slug}` : "/category"),
   component: CategoryPage,

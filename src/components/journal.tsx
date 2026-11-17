@@ -2,7 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Search, Menu, X, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { articleMeta, categories, mission, searchArticles, type Article } from "@/lib/articles";
+import { articleMeta, categories, mission, type Article } from "@/lib/articles";
+import { useQuery } from "@tanstack/react-query";
+import { publicArticlesQuery } from "@/lib/article-queries";
+import { useJournalSession } from "@/hooks/use-journal-session";
 import footballPhoto from "@/assets/football-training.jpg";
 
 export function Wordmark() {
@@ -25,7 +28,8 @@ export function JournalHeader() {
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => { if (searchOpen) input.current?.focus(); }, [searchOpen]);
   const close = () => { setMenuOpen(false); setSearchOpen(false); };
-  const results = searchArticles(query);
+  const { data: allArticles = [] } = useQuery(publicArticlesQuery);
+  const results = allArticles.filter(a => `${a.title} ${a.subtitle} ${a.excerpt} ${a.category} ${a.author}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   return <header className="site-header"><a href="#main-content" className="sr-only focus:not-sr-only focus:block focus:p-4">Skip to content</a>
     <div className="journal-shell header-inner"><Link to="/" aria-label="The Football Development Journal home" onClick={close}><Wordmark/></Link>
       <div className="flex items-center gap-2"><nav aria-label="Main navigation" className="desktop-nav"><Navigation onNavigate={close}/></nav>
@@ -43,9 +47,10 @@ export function JournalHeader() {
 }
 
 export function JournalFooter() {
+  const { user } = useJournalSession();
   return <footer className="site-footer"><div className="journal-shell"><div className="footer-top">
     <div className="footer-brand"><Link to="/" aria-label="The Football Development Journal home"><Wordmark/></Link><p className="footer-mission">{mission}</p></div>
-    <div><h2 className="eyebrow mb-5 text-accent">Explore the journal</h2><nav className="flex flex-col items-start gap-3 text-xs" aria-label="Footer navigation"><Link to="/">Home</Link>{categories.map(c => <Link key={c.slug} to="/category/$name" params={{ name: c.slug }}>{c.name}</Link>)}<Link to="/about">About</Link></nav></div>
+    <div><h2 className="eyebrow mb-5 text-accent">Explore the journal</h2><nav className="flex flex-col items-start gap-3 text-xs" aria-label="Footer navigation"><Link to="/">Home</Link>{categories.map(c => <Link key={c.slug} to="/category/$name" params={{ name: c.slug }}>{c.name}</Link>)}<Link to="/about">About</Link><a href="/rss.xml">RSS feed</a>{user ? <Link to="/admin">Redaktionen</Link> : <Link to="/auth">Admin · Logga in</Link>}</nav></div>
     <div><h2 className="eyebrow mb-5 text-accent">Independent perspectives</h2><p className="font-serif text-base leading-relaxed opacity-75">Swedish football.<br/>An international perspective.</p><p className="text-xs mt-7 opacity-75">Contact — in preparation</p></div>
   </div><div className="footer-bottom"><span>© {new Date().getFullYear()} The Football Development Journal</span><span>Independent. Research-informed. Development-focused.</span></div></div></footer>;
 }

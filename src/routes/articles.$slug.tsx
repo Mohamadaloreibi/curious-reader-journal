@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, Check, Link as LinkIcon, Linkedin } from "lucide-react";
-import { articles, articleMeta } from "@/lib/articles";
+import { articleMeta } from "@/lib/articles";
+import { publicArticlesQuery } from "@/lib/article-queries";
 import { editorialHead } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/articles/$slug")({
-  loader: ({ params }) => { const article = articles.find(a => a.slug === params.slug); if (!article) throw notFound(); return article; },
+  loader: async ({ params, context }) => { const articles = await context.queryClient.ensureQueryData(publicArticlesQuery); const article = articles.find(a => a.slug === params.slug); if (!article) throw notFound(); return article; },
   head: ({ loaderData }) => editorialHead(loaderData?.title ?? "Unavailable", loaderData?.excerpt || loaderData?.subtitle || loaderData?.title || "Article unavailable.", loaderData ? `/articles/${loaderData.slug}` : "/articles", "article"),
   component: ArticlePage,
 });

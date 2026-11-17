@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { JournalHeader, JournalFooter } from "@/components/journal";
 import { Button } from "@/components/ui/button";
+import { JournalSessionProvider } from "@/hooks/use-journal-session";
 
 function NotFoundComponent() {
   return (
@@ -92,6 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "The Football Development Journal", href: "/rss.xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" },
@@ -122,10 +124,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <JournalSessionProvider>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <JournalHeader />
       <Outlet />
       <JournalFooter />
+      </JournalSessionProvider>
     </QueryClientProvider>
   );
 }

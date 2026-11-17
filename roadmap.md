@@ -1,4 +1,9 @@
 # Journal roadmap
+- [x] Add secure admin login, profile editing, article drafts and publishing.
+- [x] Connect public pages and search to published admin articles while retaining Markdown content.
+- [x] Add RSS feed containing only completed published articles.
+- [x] Verify admin access controls and publishing-to-reader flow.
+- [ ] Grant the owner's account admin access — owner must first create or sign into an account and identify it.
 - [x] Build editorial design, home, navigation, search, categories, and About.
 - [x] Add Markdown article pipeline and reading/share experience without fabricating missing text.
 - [x] Add metadata, editorial share-image asset, and simplified pitch favicon.

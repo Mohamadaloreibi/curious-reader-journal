@@ -30,7 +30,9 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Journal architecture
-- Article content and metadata live in Markdown frontmatter under src/content/articles and are loaded with Vite raw imports; adding one file must populate home, categories, and article routes without a database.
+- Markdown articles remain bundled defaults; published journal_articles rows override matching slugs through one public query, so admin publishing updates all reader surfaces without redeployment.
 - Shared journal navigation and footer wrap the root Outlet; content routes own their metadata so every page is independently shareable.
 - Keep unavailable editorial fields empty and render an explicit preparation state instead of generating content; source references are derived from the supplied source list.
 - Canonical and Open Graph page URLs are relative until a real public domain exists; do not deploy placeholder domains or preview URLs as canonical targets.
+- Admin writes use authenticated server functions plus a separate user_roles check and database policies; no signup, profile field, or browser state can grant administrator privileges.
+- RSS uses the same public article reader as the website and excludes articles without manuscript text; endpoint links derive from the request origin.
