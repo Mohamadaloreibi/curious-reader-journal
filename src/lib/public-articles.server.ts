@@ -20,12 +20,16 @@ export async function readPublicArticles(): Promise<Article[]> {
     rows.push(...data); if (data.length < 500) break;
   }
   const sourcesSchema = z.array(sourceSchema);
+
+    // Load the privileged client once, even when several images resolve in parallel.
+  let adminClient: Promise<typeof import("@/integrations/supabase/client.server")["supabaseAdmin"]> | undefined;
+  const getAdminClient = () => (adminClient ??= import("@/integrations/supabase/client.server").then(m => m.supabaseAdmin));
   async function resolveImage(image: string) {
     if (!image.startsWith("journal-images/")) return image;
     // Only sign exact image references returned by the published-only, RLS-scoped read above.
     // Never accept a caller-supplied object path or use the privileged client to read articles.
     if (!rows.some(row => row.status === "published" && (row.cover_image === image || row.og_image === image))) return "";
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const supabaseAdmin = await getAdminClient();
     const { data } = await supabaseAdmin.storage.from("journal-images").createSignedUrl(image.slice(15), 3600);
     return data?.signedUrl.replace(url ?? "", import.meta.env['VITE_SUPABASE_URL']) ?? "";
   }
